@@ -1,8 +1,44 @@
-﻿@{
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row">
+    <!-- Video Player -->
+    <div class="col-12 col-md-7 col-lg-8 mb-3">
+        <div class="ratio ratio-16x9 bg-dark rounded">
+            <div class="d-flex align-items-center justify-content-center text-white">
+                <span>Video Player</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabbed Panel -->
+    <div class="col-12 col-md-5 col-lg-4">
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="view-tab" data-bs-toggle="tab"
+                        data-bs-target="#view-pane" type="button" role="tab"
+                        aria-controls="view-pane" aria-selected="true">View</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="comment-tab" data-bs-toggle="tab"
+                        data-bs-target="#comment-pane" type="button" role="tab"
+                        aria-controls="comment-pane" aria-selected="false">Comment</button>
+            </li>
+        </ul>
+        <div class="tab-content border border-top-0 rounded-bottom p-3">
+            <!-- View Tab -->
+            <div class="tab-pane fade show active" id="view-pane" role="tabpanel" aria-labelledby="view-tab">
+                <p class="text-muted">Comments here</p>
+            </div>
+            <!-- Comment Tab -->
+            <div class="tab-pane fade" id="comment-pane" role="tabpanel" aria-labelledby="comment-tab">
+                <div class="mb-3">
+                    <label for="commentInput" class="form-label">Add a comment</label>
+                    <textarea class="form-control" id="commentInput" rows="3"></textarea>
+                </div>
+                <button type="button" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </div>
 </div>
