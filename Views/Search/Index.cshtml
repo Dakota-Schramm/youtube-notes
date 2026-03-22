@@ -6,9 +6,19 @@
     <!-- Video Player -->
     <div class="col-12 col-md-7 col-lg-8 mb-3">
         <div class="ratio ratio-16x9 bg-dark rounded">
-            <div class="d-flex align-items-center justify-content-center text-white">
-                <span>Video Player</span>
-            </div>
+            @if (!string.IsNullOrEmpty(ViewData["VideoUrl"] as string))
+            {
+                <iframe width="560" height="315" src="@ViewData["VideoUrl"]"
+                        title="YouTube video player" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            }
+            else
+            {
+                <div class="d-flex align-items-center justify-content-center text-white">
+                    <span>Video Player</span>
+                </div>
+            }
         </div>
     </div>
 
