@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using youtube_notes.Data;
+using youtube_notes.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // TODO: Add environment-specific configuration for the database connection string
@@ -13,6 +14,13 @@ builder.Services.AddDbContext<youtube_notesContext>(options =>
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    SeedData.Initialize(services);
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
