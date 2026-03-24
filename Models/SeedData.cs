@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using MvcMovie.Data;
+using youtube_notes.Data;
 using System;
 using System.Linq;
 
@@ -12,7 +12,7 @@ public static class SeedData
     {
         using (var context = new youtube_notesContext(
             serviceProvider.GetRequiredService<
-                DbContextOptions<MvcMovieContext>>()))
+                DbContextOptions<youtube_notesContext>>()))
         {
             // Look for any movies.
             if (context.Note.Any())
