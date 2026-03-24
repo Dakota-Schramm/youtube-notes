@@ -1,4 +1,9 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using youtube_notes.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<youtube_notesContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("youtube_notesContext") ?? throw new InvalidOperationException("Connection string 'youtube_notesContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
