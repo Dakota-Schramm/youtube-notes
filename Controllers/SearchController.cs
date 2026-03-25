@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using youtube_notes.Data;
 using youtube_notes.Models;
 
@@ -64,7 +65,7 @@ public class SearchController : Controller
         _context.SaveChanges();
 
         if (Request.Headers.XRequestedWith == "XMLHttpRequest")
-            return Json(new { note.Id, note.Comment, note.TimeAt });
+            return Json(new { note.Id, note.Comment, note.TimeAt, email = User.FindFirstValue(ClaimTypes.Email) });
 
         return RedirectToAction("Index", new { url = youtubeUrl });
     }
@@ -102,12 +103,13 @@ public class SearchController : Controller
     {
         string videoId = ExtractVideoId(url);
         var userId = GetUserId();
-        var notes = from n in _context.Note
-                    where n.YoutubeId == videoId && n.UserId == userId
-                    orderby n.TimeAt ascending
-                    select n;
+        var notes = _context.Note
+                    .Include(n => n.User)
+                    .Where(n => n.YoutubeId == videoId && n.UserId == userId)
+                    .OrderBy(n => n.TimeAt)
+                    .ToArray();
 
-        return notes.ToArray();
+        return notes;
     }
     
     private static bool isValidUrl(string? url)
