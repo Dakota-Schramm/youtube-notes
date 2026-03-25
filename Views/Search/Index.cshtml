@@ -23,6 +23,10 @@
 
     <!-- Tabbed Panel -->
     <div class="col-12 col-md-5 col-lg-4">
+        <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" id="myNotesOnly">
+            <label class="form-check-label" for="myNotesOnly">Show only my notes</label>
+        </div>
         <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="view-tab" data-bs-toggle="tab"
@@ -42,7 +46,7 @@
                 {
                     @foreach (var note in notes)
                     {
-                        <div class="mb-2 p-2 border rounded comment-marker" data-time="@note.TimeAt">
+                        <div class="mb-2 p-2 border rounded comment-marker" data-time="@note.TimeAt" data-email="@note.User?.Email">
                             <small class="text-muted fw-bold">@note.User?.Email</small>
                             <br />
                             <small class="text-muted">@note.TimeAt s</small>
@@ -81,9 +85,16 @@
     }
 </style>
 
+@{
+    var currentUserEmail = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? "";
+}
+
 @if (!string.IsNullOrEmpty(videoId))
 {
     <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        var currentUserEmail = '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(currentUserEmail))';
+    </script>
     <script>
         var player;
         var timeInterval = null;
@@ -156,6 +167,7 @@
                 var div = document.createElement('div');
                 div.className = 'mb-2 p-2 border rounded comment-marker';
                 div.setAttribute('data-time', data.timeAt);
+                div.setAttribute('data-email', data.email);
                 div.innerHTML = '<small class="text-muted fw-bold">' + data.email + '</small>'
                               + '<br />'
                               + '<small class="text-muted">' + data.timeAt + ' s</small>'
@@ -165,7 +177,21 @@
                 document.getElementById('commentInput').value = '';
 
                 new bootstrap.Tab(document.getElementById('view-tab')).show();
+                applyNoteFilter();
             });
         });
+
+        function applyNoteFilter() {
+            var myOnly = document.getElementById('myNotesOnly').checked;
+            document.querySelectorAll('#view-pane .comment-marker').forEach(function (el) {
+                if (myOnly && el.getAttribute('data-email') !== currentUserEmail) {
+                    el.style.display = 'none';
+                } else {
+                    el.style.display = '';
+                }
+            });
+        }
+
+        document.getElementById('myNotesOnly').addEventListener('change', applyNoteFilter);
     </script>
 }

@@ -102,10 +102,9 @@ public class SearchController : Controller
     private Note[] FetchNotesforVideo(string? url)
     {
         string videoId = ExtractVideoId(url);
-        var userId = GetUserId();
         var notes = _context.Note
                     .Include(n => n.User)
-                    .Where(n => n.YoutubeId == videoId && n.UserId == userId)
+                    .Where(n => n.YoutubeId == videoId)
                     .OrderBy(n => n.TimeAt)
                     .ToArray();
 
