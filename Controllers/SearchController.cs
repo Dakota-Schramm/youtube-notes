@@ -36,7 +36,7 @@ public class SearchController : Controller
     }
 
     [HttpPost]
-    public IActionResult Create(string comment, string youtubeUrl)
+    public IActionResult Create(string comment, string youtubeUrl, int timeAt = 0)
     {
         if (_context.Note == null)
             return RedirectToAction("Index", new { url = youtubeUrl });
@@ -47,7 +47,7 @@ public class SearchController : Controller
         {
             Comment = comment,
             YoutubeId = videoId,
-            TimeAt = 0
+            TimeAt = timeAt
         };
 
         _context.Note.Add(note);

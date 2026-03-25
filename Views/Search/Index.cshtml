@@ -1,18 +1,16 @@
 @{
     ViewData["Title"] = "Search";
+    var embedUrl = ViewData["VideoUrl"] as string;
+    var videoId = !string.IsNullOrEmpty(embedUrl) ? embedUrl.Split('/').Last().Split('?').First() : null;
 }
 
 <div class="row">
     <!-- Video Player -->
     <div class="col-12 col-md-7 col-lg-8 mb-3">
         <div class="ratio ratio-16x9 bg-dark rounded">
-            @if (!string.IsNullOrEmpty(ViewData["VideoUrl"] as string))
+            @if (!string.IsNullOrEmpty(videoId))
             {
-                <iframe width="560" height="315" src="@ViewData["VideoUrl"]"
-                        title="YouTube video player" frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        referrerpolicy="strict-origin-when-cross-origin"
-                        allowfullscreen></iframe>
+                <div id="ytplayer"></div>
             }
             else
             {
@@ -57,8 +55,9 @@
             </div>
             <!-- Comment Tab -->
             <div class="tab-pane fade" id="comment-pane" role="tabpanel" aria-labelledby="comment-tab">
-                <form method="post" asp-controller="Search" asp-action="Create">
+                <form method="post" asp-controller="Search" asp-action="Create" id="commentForm">
                     <input type="hidden" name="youtubeUrl" value="@Context.Request.Query["url"]" />
+                    <input type="hidden" name="timeAt" id="timeAtInput" value="0" />
                     <div class="mb-3">
                         <label for="commentInput" class="form-label">Add a comment</label>
                         <textarea class="form-control" id="commentInput" name="comment" rows="3"></textarea>
@@ -69,3 +68,23 @@
         </div>
     </div>
 </div>
+
+@if (!string.IsNullOrEmpty(videoId))
+{
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('ytplayer', {
+                videoId: '@videoId',
+                playerVars: { 'autoplay': 0 }
+            });
+        }
+
+        document.getElementById('commentForm').addEventListener('submit', function () {
+            if (player && typeof player.getCurrentTime === 'function') {
+                document.getElementById('timeAtInput').value = Math.floor(player.getCurrentTime());
+            }
+        });
+    </script>
+}
