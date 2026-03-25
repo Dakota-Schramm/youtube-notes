@@ -57,11 +57,14 @@
             </div>
             <!-- Comment Tab -->
             <div class="tab-pane fade" id="comment-pane" role="tabpanel" aria-labelledby="comment-tab">
-                <div class="mb-3">
-                    <label for="commentInput" class="form-label">Add a comment</label>
-                    <textarea class="form-control" id="commentInput" rows="3"></textarea>
-                </div>
-                <button type="button" class="btn btn-primary">Submit</button>
+                <form method="post" asp-controller="Search" asp-action="Create">
+                    <input type="hidden" name="youtubeUrl" value="@Context.Request.Query["url"]" />
+                    <div class="mb-3">
+                        <label for="commentInput" class="form-label">Add a comment</label>
+                        <textarea class="form-control" id="commentInput" name="comment" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
             </div>
         </div>
     </div>
