@@ -1,5 +1,13 @@
 # youtube-notes
 
+Technologies Used:
+  - C#
+  - ASP.NET Core MVC - Razor Pages
+  - Entity Framework Core
+  - jQuery
+  - Bootstrap
+  - Youtube iFrame API
+
 ## Usage
 
 The home page is setup with a simple GET form that the user can use to submit a YouTube video URL.
