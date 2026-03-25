@@ -97,8 +97,9 @@ public class SearchController : Controller
         string videoId = ExtractVideoId(url);
         var notes = from n in _context.Note
                     where n.YoutubeId == videoId
+                    orderby n.TimeAt ascending
                     select n;
-        
+
         return notes.ToArray();
 
         // This is a placeholder. In a real application, you would query your database for notes associated with the videoId.
