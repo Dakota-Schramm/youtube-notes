@@ -39,7 +39,11 @@ public class SearchController : Controller
     public IActionResult Create(string comment, string youtubeUrl, int timeAt = 0)
     {
         if (_context.Note == null)
+        {
+            if (Request.Headers.XRequestedWith == "XMLHttpRequest")
+                return BadRequest(new { error = "Database connection error." });
             return RedirectToAction("Index", new { url = youtubeUrl });
+        }
 
         var videoId = ExtractVideoId(ConvertToEmbedUrl(youtubeUrl));
 
@@ -52,6 +56,9 @@ public class SearchController : Controller
 
         _context.Note.Add(note);
         _context.SaveChanges();
+
+        if (Request.Headers.XRequestedWith == "XMLHttpRequest")
+            return Json(new { note.Id, note.Comment, note.TimeAt });
 
         return RedirectToAction("Index", new { url = youtubeUrl });
     }
