@@ -7,6 +7,8 @@ Technologies Used:
   - jQuery
   - Bootstrap
   - Youtube iFrame API
+  - SQLite for development DB
+  - Identity for user management
 
 ## Usage
 
