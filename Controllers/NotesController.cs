@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +12,7 @@ using youtube_notes.Models;
 
 namespace youtube_notes.Controllers
 {
+    [Authorize]
     public class NotesController : Controller
     {
         private readonly youtube_notesContext _context;
@@ -19,10 +22,13 @@ namespace youtube_notes.Controllers
             _context = context;
         }
 
+        private string GetUserId() => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
         // GET: Notes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Note.ToListAsync());
+            var userId = GetUserId();
+            return View(await _context.Note.Where(n => n.UserId == userId).ToListAsync());
         }
 
         // GET: Notes/Details/5
@@ -33,8 +39,9 @@ namespace youtube_notes.Controllers
                 return NotFound();
             }
 
+            var userId = GetUserId();
             var note = await _context.Note
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == id && m.UserId == userId);
             if (note == null)
             {
                 return NotFound();
@@ -56,6 +63,7 @@ namespace youtube_notes.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Comment,YoutubeId,TimeAt")] Note note)
         {
+            note.UserId = GetUserId();
             if (ModelState.IsValid)
             {
                 _context.Add(note);
@@ -73,7 +81,8 @@ namespace youtube_notes.Controllers
                 return NotFound();
             }
 
-            var note = await _context.Note.FindAsync(id);
+            var userId = GetUserId();
+            var note = await _context.Note.FirstOrDefaultAsync(n => n.Id == id && n.UserId == userId);
             if (note == null)
             {
                 return NotFound();
@@ -93,10 +102,20 @@ namespace youtube_notes.Controllers
                 return NotFound();
             }
 
+            var userId = GetUserId();
+            note.UserId = userId;
+
             if (ModelState.IsValid)
             {
                 try
                 {
+                    var existing = await _context.Note.AsNoTracking()
+                        .FirstOrDefaultAsync(n => n.Id == id && n.UserId == userId);
+                    if (existing == null)
+                    {
+                        return NotFound();
+                    }
+
                     _context.Update(note);
                     await _context.SaveChangesAsync();
                 }
@@ -124,8 +143,9 @@ namespace youtube_notes.Controllers
                 return NotFound();
             }
 
+            var userId = GetUserId();
             var note = await _context.Note
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == id && m.UserId == userId);
             if (note == null)
             {
                 return NotFound();
@@ -139,7 +159,8 @@ namespace youtube_notes.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var note = await _context.Note.FindAsync(id);
+            var userId = GetUserId();
+            var note = await _context.Note.FirstOrDefaultAsync(n => n.Id == id && n.UserId == userId);
             if (note != null)
             {
                 _context.Note.Remove(note);

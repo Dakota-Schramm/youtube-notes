@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace youtube_notes.Models;
 
@@ -12,4 +13,7 @@ public class Note
 
     [Display(Name="Time At (seconds)")]
     public int TimeAt { get; set; }
+
+    public string UserId { get; set; }
+    public IdentityUser User { get; set; }
 }

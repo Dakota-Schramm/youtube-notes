@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using youtube_notes.Data;
 using youtube_notes.Models;
@@ -12,6 +14,8 @@ public class SearchController : Controller
     {
         _context = context;
     }
+
+    private string GetUserId() => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
     public IActionResult Index(string? url)
     {
@@ -35,6 +39,7 @@ public class SearchController : Controller
         return View();
     }
 
+    [Authorize]
     [HttpPost]
     public IActionResult Create(string comment, string youtubeUrl, int timeAt = 0)
     {
@@ -51,7 +56,8 @@ public class SearchController : Controller
         {
             Comment = comment,
             YoutubeId = videoId,
-            TimeAt = timeAt
+            TimeAt = timeAt,
+            UserId = GetUserId()
         };
 
         _context.Note.Add(note);
@@ -95,19 +101,13 @@ public class SearchController : Controller
     private Note[] FetchNotesforVideo(string? url)
     {
         string videoId = ExtractVideoId(url);
+        var userId = GetUserId();
         var notes = from n in _context.Note
-                    where n.YoutubeId == videoId
+                    where n.YoutubeId == videoId && n.UserId == userId
                     orderby n.TimeAt ascending
                     select n;
 
         return notes.ToArray();
-
-        // This is a placeholder. In a real application, you would query your database for notes associated with the videoId.
-        return new Note[]
-        {
-            new Note { Id = 1, Comment = "This is a great video!", YoutubeId = videoId, TimeAt = 30 },
-            new Note { Id = 2, Comment = "I learned a lot from this.", YoutubeId = videoId, TimeAt = 120 }
-        };
     }
     
     private static bool isValidUrl(string? url)
