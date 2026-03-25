@@ -45,7 +45,7 @@ public class SearchController : Controller
         };
     }
 
-    private static bool? isValidUrl(string? url)
+    private static bool isValidUrl(string? url)
     {
         if (string.IsNullOrEmpty(url))
             return false;
