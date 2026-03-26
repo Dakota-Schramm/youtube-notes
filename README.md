@@ -14,10 +14,12 @@ Technologies Used:
 
 ### Home Page
 
-![Home](<Screenshot 2026-03-25 at 9.12.19 PM.png>)
+![Home](docs/images/Home.png)
 
 The home page is setup with a simple GET form that the user can use to submit a YouTube video URL.
 
 The user will be redirected when they submit to a note taking area.
 
 ### Search Page
+
+![Search](docs/images/Search-Example-with-Comments.png)
