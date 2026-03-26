@@ -31,7 +31,7 @@
                 @Html.DisplayFor(modelItem => item.Comment)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.YoutubeId)
+                <a asp-controller="Search" asp-action="Index" asp-route-url="@($"https://www.youtube.com/watch?v={item.YoutubeId}")">@Html.DisplayFor(modelItem => item.YoutubeId)</a>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.TimeAt)
