@@ -23,9 +23,12 @@
 
     <!-- Tabbed Panel -->
     <div class="col-12 col-md-5 col-lg-4">
-        <div class="form-check mb-2">
-            <input class="form-check-input" type="checkbox" id="myNotesOnly">
-            <label class="form-check-label" for="myNotesOnly">Show only my notes</label>
+        <div class="d-flex align-items-center mb-2">
+            <div class="form-check me-3">
+                <input class="form-check-input" type="checkbox" id="myNotesOnly">
+                <label class="form-check-label" for="myNotesOnly">Show only my notes</label>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="downloadUserComments">Download user comments</button>
         </div>
         <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item" role="presentation">
@@ -193,5 +196,28 @@
         }
 
         document.getElementById('myNotesOnly').addEventListener('change', applyNoteFilter);
+
+        document.getElementById('downloadUserComments').addEventListener('click', function () {
+            var comments = document.querySelectorAll('#view-pane .comment-marker');
+            var lines = [];
+            comments.forEach(function (el) {
+                if (el.getAttribute('data-email') !== currentUserEmail) return;
+                var time = el.getAttribute('data-time') + ' s';
+                var comment = el.querySelector('p').textContent;
+                lines.push(time);
+                lines.push(comment);
+                lines.push('');
+            });
+            if (lines.length === 0) {
+                alert('No comments to download.');
+                return;
+            }
+            var blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'my-comments.txt';
+            a.click();
+            URL.revokeObjectURL(a.href);
+        });
     </script>
 }
